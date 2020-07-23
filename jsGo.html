@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>REA加密</title>
+</head>
+<body>
+<b>js加密</b>
+<textarea id="code" value=""></textarea>
+<button id="torea" onclick="clickButton();">加密</button>
+<button onclick="resset();">重置</button>
+<button onclick="goto();">运行</button>
+<textarea id="later" value=""></textarea>
+
+<style>
+b {
+  display:block;
+}
+button {
+  display:block;
+  width:50px;
+  height:20px;
+}
+
+#later {
+  width:200px;
+  height:150px;
+}
+</style>
+
+<script>
+var doc=document;
+var btn=doc.querySelector("#torea");
+
+function goto(){
+  var info=doc.querySelector("#later").value;
+  
+  try{
+     eval(info)
+   }catch(e){alert(e)}
+  window.reload(false)
+}
+
+function resset(){
+  document.querySelector("#later").value="";
+}
+
+function clickButton(){
+ 
+  var info=doc.querySelector("#code").value;
+  var message=toREA(String(info));
+  doc.querySelector("#later").value=String(message);
+  window.reload(false);
+}
+
+function toREA(info){
+   info=String(info);
+   
+   if(info==""){doc.querySelector("#later").innerText=""}
+   
+   var len=info.length,
+   infoArray=[];
+   
+   
+   for(var i=0;i<len;i++){
+     infoArray.push("0x"+info.charCodeAt(i).toString(16));
+   };i=0;
+   
+   var infoStr="";
+   
+   for(i=0;i<infoArray.length;i++){
+     infoStr+="{'"+i+"':"+infoArray[i]+"}";
+   }
+   
+   infoStr=infoStr.replace(/}{/g,",");
+   
+   var infoChar="";
+   
+   var str=infoArray[infoArray.length-1];
+   
+   for(i=0;i<str.length;i++){
+     infoChar+=str.charCodeAt(i).toString(4);
+   }
+   
+   var num=infoChar;
+  
+   infoChar="_"+parseInt(infoChar).toString(16);
+   
+   var 禁止输出=["console","alert","document.write"];
+  
+   var 是否禁止=false;
+   
+   var eryCode="var _"+parseInt(num).toString(5)+" = "+"this"+";this ['"+infoChar+"'] = function () {"+
+   "var "+"_"+parseInt(num).toString(15)+" = !![];"+
+   "(function ("+"$"+parseInt(num).toString(14)+" ,"+"$"+parseInt(num).toString(13)+"){"+
+   "if ("+'_'+parseInt(num).toString(15)+"){"+
+   "var "+"_"+parseInt(num).toString(18)+" = "+infoStr+";"+
+   "var "+"_"+parseInt(num).toString(9)+" = new Array(0)"+";"+
+   "for (var "+"_"+parseInt(num).toString(20)+" in "+("_"+parseInt(num).toString(18))+"){"+
+   "_"+parseInt(num).toString(9)+"["+"_"+parseInt(num).toString(20)+"]"+" = "+"_"+parseInt(num).toString(18)+"["+"_"+parseInt(num).toString(20)+"];"+
+   ""+
+   "};"+
+   "var "+"_"+parseInt(num).toString(30)+"=new String('');"+
+   "for (var "+"_"+parseInt(num).toString(24)+" in "+"_"+parseInt(num).toString(9)+") {"+
+   "_"+parseInt(num).toString(30)+"+="+"String['fromCharCode']("+"_"+parseInt(num).toString(9)+"[_"+parseInt(num).toString(24)+"]"+");"+
+   "};"+
+   
+   "_"+parseInt(num).toString(5)+"['eval']"+"(_"+parseInt(num).toString(30)+");"+
+   
+   "}"+
+   
+   "})(this, this ['"+infoChar+"']);"+
+   
+  
+   "};this ['"+infoChar+"'] ();";
+   
+   return eryCode;
+}
+
+
+</script>
+</body>
+</html>
