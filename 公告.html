@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+  <head>
+	<meta charset="utf-8" name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"/>
+	<title>公告</title>
+    <link rel="stylesheet" type="text/css" href="layui/css/layui.css">
+  </head>
+  <body>
+    <script src="layui/layui.all.js"></script>
+  </body>
+  <script>
+  var info="此加密为REA_V2(Replacement Encryption Algorithm [Version 2.0.0])['置换加密算法v2']"
+  
+    layui.use('layer', function(){
+      var layer = layui.layer;  
+      // layer.msg('hello');
+      layer.open({
+        type: 1,
+        closeBtn:1,
+        title: '<h2>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;公告</h2>',
+        content:info,
+        area:["300px","250px"],
+        cancel:function(index,layero){
+         location.href="index.html";
+        }
+        
+      });
+    });
+  </script>
+</html>
