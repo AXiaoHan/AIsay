@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+  <head>
+	<meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"/>
+	<title>REA-V2</title>
+    <link rel="stylesheet" type="text/css" href="layui/css/layui.css"/>
+  </head>
+  <body>	
+	<h1>REA-V2</h1>
+	<p class="layui-p">保护您的js代码 by xiaoHan</p>
+    <p class="layui-p">变量模式:普通模式</p>
+    <script src="layui/layui.all.js"></script>
+  
+  
+  <!--处理h1标签的闪动-->
+  <script>
+  var titleColor="blue";
+  setInterval(function (){
+    if(titleColor=="blue"){
+      document.querySelector("h1").style.color=titleColor;
+      titleColor="red";
+    }else{
+      document.querySelector("h1").style.color=titleColor;
+      titleColor="blue";
+    }
+  },50);
+  </script>
+  
+  <div class="layui-textarea-block">
+    <textarea id="codeText" class="layui-textarea" rows="8" placeholder="您需要加密的javaScript代码" value=""></textarea>
+  </div>
+  <br/>
+  <div class="layui-button-block">
+    <button class="layui-btn" style="width:75px;border-radius:25px;color:white;font-size:12;">加密</button>
+    <button id="execute" class="layui-btn" style="width:75px;border-radius:25px;color:white;font-size:12;">运行</button>
+    <button id="clear" class="layui-btn" style="width:75px;border-radius:25px;color:white;font-size:12;">清空</button>
+    <button class="layui-btn" style="width:75px;border-radius:25px;color:white;font-size:12;">下载</button>
+  </div>
+  
+  <br/>
+  
+  <div class="layui-button-block">
+    <input id="upClick" name="file" type="file" style="display:none;accept:js/txt;"></input>
+    <button id="upLoad" class="layui-btn" style="width:75px;border-radius:25px;color:white;font-size:12">上传</button>
+  </div>
+  
+  <br/>
+  
+  <div class="layui-textarea-block">
+    <textarea id="encryCode" class="layui-textarea" rows="8" placeholder="经过加密的javaScript代码" value=""></textarea>
+  </div>
+  
+  <script src="jquery.min.js"></script>
+  
+  <!--其它事件处理-->
+  <script>
+  $(function(){
+  $("#clear")["0"].onclick=function(){
+     $("#codeText")["0"].value="";
+     $("#encryCode")["0"].value="";
+  }
+  $("#execute")["0"].onclick=function(){
+     var info=$("#encryCode")["0"].value;
+     info=String(info);
+     
+     (function(msg){
+       "use strict";
+       try{
+       eval(msg);
+       }catch(err){
+         layui.use('layer', function(){var layer = layui.layer;layer.open({type: 0,title: '<h3 style="color:red;">错误</h3>',content: "<h4 style='color:red;'>"+String(err)+"</h4>"+"<br/>您之前的代码:"+msg+"<br/>请检查错误"});});
+       }
+     })(info);
+     info=null;
+  };
+  });
+  </script>
+  
+  <!--绑定和处理上传-->
+  <script>
+  $(function (){
+    var info=$("#upLoad").click(function(){
+      
+      var clicks=$("#upClick");
+      
+      clicks.click();//clicks["0"].style.display="block"
+      
+      clicks=clicks.prop("files");
+      
+      
+      if(clicks.length=="0"){
+        layui.use('layer', function(){
+      var layer = layui.layer;  
+      layer.open({
+        type: 0,
+        title: '提示',
+        content: '请上传js文件,上传完成后再次点击上传按钮,然后取消即可' 
+      });
+    });
+      }
+      
+     var reader=new FileReader();
+      reader.readAsText(clicks[0],"UTF-8");
+      reader.onload=function(event){
+         var info=event.target.result;
+         
+         layui.use('layer', function(){
+      var layer = layui.layer;
+      layer.open({
+        type: 0,
+        title: '提示',
+        content: '上传文件信息获取成功!' 
+      });
+    });
+         
+         document.querySelector("#codeText").value=String(info);
+      }
+      
+    });
+  
+  });
+  </script>
+  
+  <!--REA算法-->
+  <script>
+  
+  </script>
+  
+  
+  </body>
+</html>
