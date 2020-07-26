@@ -6,24 +6,37 @@
     <link rel="stylesheet" type="text/css" href="layui/css/layui.css"/>
   </head>
   <body>	
-	<h1>REA-V2</h1>
-	<p class="layui-p">保护您的js代码 by xiaoHan</p>
-    <p class="layui-p">变量模式:普通模式</p>
+	
+    <h1 id="title">REA-V2</h1>
+    <style>
+    
+    #title {
+      animation: roundRect 5s infinite;
+    }
+    
+     @keyframes roundRect{
+       0% {color:black;}
+       15% {color:#FF01FC;}
+       30% {color:red;}
+       45% {color:#FFF0C6FF;}
+       60% {color:#FC2FC5;}
+       75% {color:#FC3CF0;}
+       90% {color:#FFFF3C;}
+       100% {color:black;}
+     }
+     
+    </style>
+
+
+   
+	<p class="layui-p">保护您的js代码 writer by xiaoHan</p>
+    <p class="layui-p">变量模式:前后随机</p>
     <script src="layui/layui.all.js"></script>
   
   
   <!--处理h1标签的闪动-->
-  <script>
-  var titleColor="blue";
-  setInterval(function (){
-    if(titleColor=="blue"){
-      document.querySelector("h1").style.color=titleColor;
-      titleColor="red";
-    }else{
-      document.querySelector("h1").style.color=titleColor;
-      titleColor="blue";
-    }
-  },50);
+  <script type="text/javascript" charset="UTF-8">
+  
   </script>
   
   <div class="layui-textarea-block">
@@ -31,17 +44,18 @@
   </div>
   <br/>
   <div class="layui-button-block">
-    <button class="layui-btn" style="width:75px;border-radius:25px;color:white;font-size:12;">加密</button>
+    <button class="layui-btn" onclick="encryJS();" style="width:75px;border-radius:25px;color:white;font-size:12;">加密</button>
     <button id="execute" class="layui-btn" style="width:75px;border-radius:25px;color:white;font-size:12;">运行</button>
     <button id="clear" class="layui-btn" style="width:75px;border-radius:25px;color:white;font-size:12;">清空</button>
-    <button class="layui-btn" style="width:75px;border-radius:25px;color:white;font-size:12;">下载</button>
+    <button id="download" onclick="down('encryJSCode.js',String($('#encryCode')['0'].value));" class="layui-btn" style="width:75px;border-radius:25px;color:white;font-size:12;">下载</button>
   </div>
   
   <br/>
   
   <div class="layui-button-block">
     <input id="upClick" name="file" type="file" style="display:none;accept:js/txt;"></input>
-    <button id="upLoad" class="layui-btn" style="width:75px;border-radius:25px;color:white;font-size:12">上传</button>
+    <button id="upLoad" class="layui-btn" style="width:75px;border-radius:25px;color:white;font-size:12;">上传</button>
+    <button id="strictEncry" class="layui-btn" style="width:75px;border-radius:25px;color:white;font-size:0.7em;">严格加密</button>
   </div>
   
   <br/>
@@ -52,8 +66,32 @@
   
   <script src="jquery.min.js"></script>
   
-  <!--其它事件处理-->
   <script>
+    function down(fileName, content) {
+       try{
+        var aTag = document.createElement('a');
+        var blob = new Blob([content]);
+        aTag.download = fileName;
+        aTag.href = URL.createObjectURL(blob);
+        aTag.click();
+        URL.revokeObjectURL(aTag.href);
+        }catch(err){
+          layui.use('layer', function(){
+      var layer = layui.layer;
+      layer.open({
+        type: 0,
+        title: 'download错误',
+        content: '无法下载文件' 
+      });
+    });
+        }
+    }
+  </script>
+  
+  <string value="true"></string>
+  
+  <!--其它事件处理-->
+  <script type="text/javascript" charset="UTF-8">
   $(function(){
   $("#clear")["0"].onclick=function(){
      $("#codeText")["0"].value="";
@@ -62,22 +100,27 @@
   $("#execute")["0"].onclick=function(){
      var info=$("#encryCode")["0"].value;
      info=String(info);
+     var isUseStrict=document.querySelector("string");
+     var strict=isUseStrict.getAttribute('value');
      
      (function(msg){
-       "use strict";
+       if(strict==="true"){
+         "use strict";
+       }
        try{
-       eval(msg);
+       eval("window.print=alert;"+msg);
        }catch(err){
          layui.use('layer', function(){var layer = layui.layer;layer.open({type: 0,title: '<h3 style="color:red;">错误</h3>',content: "<h4 style='color:red;'>"+String(err)+"</h4>"+"<br/>您之前的代码:"+msg+"<br/>请检查错误"});});
        }
      })(info);
      info=null;
   };
-  });
+ });
   </script>
   
   <!--绑定和处理上传-->
-  <script>
+  <script type="text/javascript" charset="UTF-8">
+  
   $(function (){
     var info=$("#upLoad").click(function(){
       
@@ -122,7 +165,125 @@
   </script>
   
   <!--REA算法-->
-  <script>
+  <script type="text/javascript" charset="UTF-8">
+  function encryJS(){
+  var loading=null;
+  loading=layer.load(100,{
+    content:"<h3 style='width:70px;height:35px;'>加密中..</h3><br/>",
+    icon:0,
+    shade:false
+  });
+  
+  setTimeout(function(){
+  try{
+  var wantToCode=String($("#codeText")["0"].value);
+  
+  var encryJScode=REA_V2(wantToCode);
+  
+  $("#encryCode")["0"].value=String(encryJScode);
+  
+  layer.closeAll("loading");
+  }catch(err){
+    layer.closeAll("loading");
+    layui.use('layer', function(){var layer = layui.layer;layer.open({type: 0,title: '<h3 style="color:red;">加密错误</h3>',content: "<h4 style='color:red;'>"+String(err)+"</h4>"+"<br/>请检查错误"});});
+  }
+
+  },5);
+  
+  //layer.closeAll("loading");
+  
+  }
+  
+  var endCode=$("#encryCode")["0"];
+  
+  function REA_V2(code){
+    var len=code.length,
+    i=null,
+    hex16str="",
+    endJSCode="",
+    byteArray=[],
+    stringArray=[],
+    endString=[];
+    
+    if(code==""){code="alert('hello world!');";len=code.length};
+    
+    for(i=0;i<len;i++){
+      byteArray.push(code.charCodeAt(i));
+    }
+    
+    var byteString="";
+    for(i=0;i<byteArray.length;i++){
+      byteArray[i]="[function(){return ['0x','"+byteArray[i].toString(24)+"'];}]";
+      byteString+=byteArray[i];
+    };
+
+   repl();
+   
+   
+  
+   var headStr=code.charCodeAt(0).toString(2),
+   bodyStr=code.charCodeAt(code.length-1).toString(2);
+   
+   var mathRound=String(headStr)+String(bodyStr);
+   mathRound=parseInt(mathRound);
+  
+  
+   
+  endJSCode="this ['"+mathRound.toString(8)+"'] = '\\u0066\\u0072\\u006f\\u006d\\u0043\\u0068\\u0061\\u0072\\u0043\\u006f\\u0064\\u0065'; this ['"+mathRound.toString(9)+"'] = '\\u0065\\u0076\\u0061\\u006c';this ['"+mathRound.toString(11)+"'] = "+"function (_"+mathRound.toString(12)+"){"+
+  /*把this传入函数中*/
+  
+  "(function (_"+mathRound.toString(13)+"){"+
+  
+  "var _"+mathRound.toString(14)+" = !!![][[]];"+
+  
+  "if(_"+mathRound.toString(14)+"){"+
+  
+  "var _"+mathRound.toString(15)+" = [[][[]]+[]][+[]];"+
+  
+  "var _"+mathRound.toString(16)+" = "+byteString+";"+
+  
+  "(function (_"+mathRound.toString(17)+"){"+
+  
+  "var _"+mathRound.toString(18)+" = [];"+
+  
+  "for(var _"+mathRound.toString(19)+" in _"+mathRound.toString(17)+"){"+
+  
+    "_"+mathRound.toString(18)+" [_"+mathRound.toString(18)+".length]"+" = _"+mathRound.toString(17)+" [_"+mathRound.toString(19)+"]()[+!![]];"+
+
+  "};"+
+  
+  "for(var _"+mathRound.toString(20)+" in _"+mathRound.toString(18)+"){"+
+
+  "_"+mathRound.toString(18)+" [_"+mathRound.toString(20)+"] =parseInt.call(null, _"+mathRound.toString(18)+" [_"+mathRound.toString(20)+"],0x18);"+
+  
+  "};"+
+  
+  "var _"+mathRound.toString(21)+" = String;"+
+  
+  "var _"+mathRound.toString(22)+" = []+[];"+
+  
+  "for(var _"+mathRound.toString(23)+" in _"+mathRound.toString(18)+"){"+
+  
+    "_"+mathRound.toString(22)+" = _"+mathRound.toString(22)+" + _"+mathRound.toString(21)+"[_"+mathRound.toString(13)+" ['"+mathRound.toString(8)+"']"+"]['call'](null, _"+mathRound.toString(18)+" [_"+mathRound.toString(23)+"]);"+
+  
+  "}"+
+  
+  "_"+mathRound.toString(13)+"[_"+mathRound.toString(13)+" ["+mathRound.toString(9)+"]"+"]['call'](null, _"+mathRound.toString(22)+");"+
+  
+  "})(_"+mathRound.toString(16)+");"+
+  
+  "};"+
+
+  "})(_"+mathRound.toString(12)+");"+
+  
+  
+  "};"+
+  
+  "this ['"+mathRound.toString(11)+"']\n\n(this);";
+   
+   
+ function repl(){byteString=byteString.replace(/\]\[/g,",")};
+   return endJSCode;}
   
   </script>
   
